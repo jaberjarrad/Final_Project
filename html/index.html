@@ -8,7 +8,7 @@
   <meta name="description" content="">
   <meta name="author" content="">
 
-  <title>Freelancer - Start Bootstrap Theme</title>
+  <title>Medical Analysis Project</title>
 
   <!-- Bootstrap core CSS -->
   <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -46,6 +46,8 @@
           </li>
           <li class="nav-item mx-0 mx-lg-1">
             <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="#contact">Survey</a>
+          </li>
+          <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="#predictions">Predictions</a>
           </li>
         </ul>
       </div>
@@ -229,10 +231,9 @@
       <div class="container text-center">
         <div class="row">
           <div class="col-lg-8 mx-auto">
-            <h2 class="text-secondary text-uppercase mb-0">Age vs Condition</h2>
+            <h2 class="text-secondary text-uppercase mb-0">Prediction vs Actual</h2>
             <hr class="star-dark mb-5">
-            <img class="img-fluid mb-5" src="img/portfolio/ageConditions.png" alt="">
-            <p class="mb-5">This graph displays the ages of people with each condition appears within our dataset, allowing us to see common ages for the conditions we are working with.</p>
+            <p class="mb-5">This graph displays the accuracy of our neural network by showing its predictions compared to our actual data.</p>
             <a class="btn btn-primary btn-lg rounded-pill portfolio-modal-dismiss" href="#">
               <i class="fa fa-close"></i>
               Close</a>
@@ -366,6 +367,241 @@
 
   <!-- Custom scripts for this template -->
   <script src="js/freelancer.min.js"></script>
+
+  <script src="Apps.js"></script>
+
+  <!-- <script src="http://tjcrowder.github.io/simple-snippets-console/snippet.js"></script> -->
+
+
+  <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script> -->
+
+
+
+  <!--v Precitions v-->
+  <section id="predictions">
+      <h2 class="text-center text-uppercase">Prediction vs Actual</h2>
+      <hr class="star-dark mb-5">
+
+    <div id="predictionType">
+            <h1 class="text-center">Prediction</h1>
+            <span class="reset" style="display: none;">Selected: <span class="filter"></span></span>
+            <a class="reset" href="javascript:predictionTypeChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+
+            <div class="clearfix"></div>
+
+    </div>
+    
+
+    <div id="actualType">
+
+            <h1 class="text-center">Actual</h1>
+            <span class="reset" style="display: none;">Selected: <span class="filter"></span></span>
+            <a class="reset" href="javascript:actualTypeChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+        
+            <div class="clearfix"></div>
+
+    </div>
+<!-- 
+    <div id="genderType">
+            <strong>Gender</strong>
+            <span class="reset" style="display: none;">Selected: <span class="filter"></span></span>
+            <a class="reset" href="javascript:genderTypeChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+        
+            <div class="clearfix"></div>
+
+
+
+    </div> -->
+
+    <!-- <div id="cholesterolType">
+            <strong>Cholesterol Type</strong>
+            <span class="reset" style="display: none;">Selected: <span class="filter"></span></span>
+            <a class="reset" href="javascript:cholesterolTypeChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+        
+            <div class="clearfix"></div>
+
+
+
+    </div> -->
+    
+    <script src="../Jaber_viz/crossfilter.js"></script>
+    <script src="../Jaber_viz/d3.js"></script>
+    <script src="../Jaber_viz/dc.js"></script>
+
+    <script>
+
+    var predictionTypeChart = dc.rowChart("#predictionType");
+    var actualTypeChart = dc.rowChart("#actualType");
+    // var genderTypeChart = dc.rowChart("#genderType");
+    // var cholesterolTypeChart = dc.rowChart("#cholesterolType");
+
+        d3.csv("../Jaber_viz/pred.csv", function (err, data){
+            if (err) throw err;
+
+            // console.log(data)
+
+            var ndx = crossfilter(data);
+            var all = ndx.groupAll();
+
+            var predictionTypeDim = ndx.dimension(function (d){return d["Prediction"]; })
+            var actualTypeDim = ndx.dimension(function (d){return d["Actual"]; })
+            // var genderTypeDim = ndx.dimension(function (d){return d["Gender"]; })
+            // var cholesterolTypeDim = ndx.dimension(function (d){return d["Cholesterol (mg/dL)"]; })
+
+            var predictionTypeGroup = predictionTypeDim.group();
+            var actualTypeGroup = actualTypeDim.group();
+            // var genderTypeGroup = genderTypeDim.group();
+            // var cholesterolTypeGroup = cholesterolTypeDim.group();
+
+            predictionTypeChart
+                .height(300)
+                .dimension(predictionTypeDim)
+                .group(predictionTypeGroup)
+                .elasticX(true)
+                .data(function (group) { return group.top(3);});
+
+            actualTypeChart
+                .height(300)
+                .dimension(actualTypeDim)
+                .group(actualTypeGroup)
+                .elasticX(true)
+                .data(function (group) { return group.top(3);});
+
+            // genderTypeChart
+            //     .height(500)
+            //     .dimension(genderTypeDim)
+            //     .group(genderTypeGroup)
+            //     .elasticX(true)
+                // .data(function (group) { return group.top(10);});
+
+            // cholesterolTypeChart
+            //     .height(200)
+            //     .dimension(cholesterolTypeDim)
+            //     .group(holesterolTypeGroup)
+            //     .elasticX(true)
+            //     .data(function (group) { return group.top(10);})
+                
+            
+
+            
+                
+
+            dc.renderAll();
+        });
+    
+    </script>
+    </section>
+
+    <h1>Viz for Condition vs Age vs Gender</h1>
+
+    <div id="conditionType">
+            <strong>Condition</strong>
+            <span class="reset" style="display: none;">Selected: <span class="filter"></span></span>
+            <a class="reset" href="javascript:conditionTypeChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+
+            <div class="clearfix"></div>
+
+    </div>
+    
+
+    <div id="ageType">
+
+            <strong>Age</strong>
+            <span class="reset" style="display: none;">Selected: <span class="filter"></span></span>
+            <a class="reset" href="javascript:ageTypeChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+        
+            <div class="clearfix"></div>
+
+    </div>
+
+    <div id="genderType">
+            <strong>Gender</strong>
+            <span class="reset" style="display: none;">Selected: <span class="filter"></span></span>
+            <a class="reset" href="javascript:genderTypeChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+        
+            <div class="clearfix"></div>
+
+
+
+    </div>
+
+    <!-- <div id="cholesterolType">
+            <strong>Cholesterol Type</strong>
+            <span class="reset" style="display: none;">Selected: <span class="filter"></span></span>
+            <a class="reset" href="javascript:cholesterolTypeChart.filterAll();dc.redrawAll();" style="display: none;">reset</a>
+        
+            <div class="clearfix"></div>
+
+
+
+    </div> -->
+    
+    <script src="../Jaber_viz2/crossfilter.js"></script>
+    <script src="../Jaber_viz2/d3.js"></script>
+    <script src="../Jaber_viz2/dc.js"></script>
+
+    <script>
+
+    var conditionTypeChart = dc.rowChart("#conditionType");
+    var ageTypeChart = dc.rowChart("#ageType");
+    var genderTypeChart = dc.rowChart("#genderType");
+    // var cholesterolTypeChart = dc.rowChart("#cholesterolType");
+
+        d3.csv("../Jaber_viz2/filter.csv", function (err, data){
+            if (err) throw err;
+
+            // console.log(data)
+
+            var ndx = crossfilter(data);
+            var all = ndx.groupAll();
+
+            var conditionTypeDim = ndx.dimension(function (d){return d["Condition"]; })
+            var ageTypeDim = ndx.dimension(function (d){return d["Age"]; })
+            var genderTypeDim = ndx.dimension(function (d){return d["Gender"]; })
+            // var cholesterolTypeDim = ndx.dimension(function (d){return d["Cholesterol (mg/dL)"]; })
+
+            var conditionTypeGroup = conditionTypeDim.group();
+            var ageTypeGroup = ageTypeDim.group();
+            var genderTypeGroup = genderTypeDim.group();
+            // var cholesterolTypeGroup = cholesterolTypeDim.group();
+
+            conditionTypeChart
+                .height(350)
+                .dimension(conditionTypeDim)
+                .group(conditionTypeGroup)
+                .elasticX(true)
+                .data(function (group) { return group.top(5);});
+
+            ageTypeChart
+                .height(350)
+                .dimension(ageTypeDim)
+                .group(ageTypeGroup)
+                .elasticX(true)
+                .data(function (group) { return group.top(10);});
+
+            genderTypeChart
+                .height(150)
+                .dimension(genderTypeDim)
+                .group(genderTypeGroup)
+                .elasticX(true)
+                // .data(function (group) { return group.top(10);});
+
+            // cholesterolTypeChart
+            //     .height(200)
+            //     .dimension(cholesterolTypeDim)
+            //     .group(holesterolTypeGroup)
+            //     .elasticX(true)
+            //     .data(function (group) { return group.top(10);})
+                
+            
+
+            
+                
+
+            dc.renderAll();
+        });
+    
+    </script>
 
 </body>
 
